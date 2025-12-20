@@ -96,9 +96,22 @@ Set these in Render / local .env
 REDIS_URL=rediss://default:<token>@<endpoint>:6379
 CACHE_TTL=43200
 
-🔐 Environment Variables (Backend)
+👨‍💻 Author
 
-Set these in Render / local .env
+Narendra Yenagandula
+Final-year B.Tech Student
+Interested in Full-Stack Development, Backend Systems & Cloud
 
-REDIS_URL=rediss://default:<token>@<endpoint>:6379
-CACHE_TTL=43200
+⭐ Support
+
+If you find this useful:
+
+⭐ Star the repo
+
+🍴 Fork it
+
+🐛 Report issues / suggest features
+
+🎬 Final Note
+
+“Built by a student, for students — fast, clean, and reliable.”
