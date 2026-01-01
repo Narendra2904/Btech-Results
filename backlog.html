@@ -182,18 +182,44 @@
 </nav>
 
     <main class="flex-grow max-w-5xl mx-auto w-full px-6 py-12">
-        <div class="bg-zinc-900/30 p-5 rounded-2xl border border-zinc-800/50 shadow-2xl mb-10 search-container-box no-print">
-            <h2 class="text-yellow-accent text-[10px] font-black uppercase tracking-[0.3em] mb-4 text-center">Active Backlog Report Engine</h2>
-            <div class="flex flex-col sm:flex-row gap-3">
-                <input type="text" id="htInput" placeholder="ENTER HALL TICKET NUMBER" class="w-full bg-black/60 border border-zinc-700/50 rounded-xl px-5 py-3.5 text-sm font-bold uppercase tracking-widest input-focus text-yellow-accent" />
-                <button onclick="fetchBacklogReport()" class="bg-yellow-accent hover:bg-yellow-400 text-black font-extrabold px-10 py-3.5 rounded-xl transition-all text-xs uppercase tracking-widest shadow-lg">Generate Report</button>
-            </div>
-            <p id="errorMsg" class="hidden text-red-400 mt-4 text-[11px] font-bold text-center border border-red-400/10 py-2 rounded-lg bg-red-400/5"></p>
+        <div class="text-center mb-10 search-section">
+            <p id="timeGreeting" class="text-yellow-accent text-[10px] font-black uppercase tracking-[0.3em] mb-2 opacity-0 transition-opacity duration-1000">Good Day Bro</p>
+            <h1 class="text-3xl md:text-4xl font-black heading-tight mb-3">JNTUH B.Tech<span class="yellow-accent">   Active Backlog Report</span></h1>
+            <p class="text-zinc-500 text-sm max-w-md mx-auto leading-relaxed">Enter your HallTicket to get your Active Backlog list from the Server.</p>
         </div>
 
-        <div id="loadingState" class="hidden flex flex-col items-center py-16">
-            <div class="w-12 h-12 border-t-2 border-yellow-accent rounded-full animate-spin"></div>
-            <p class="text-zinc-600 font-bold uppercase tracking-[0.4em] text-[10px] mt-6">Searching All Attempts...</p>
+        <div class="bg-zinc-900/30 p-5 rounded-2xl border border-zinc-800/50 shadow-2xl mb-10 group relative overflow-hidden search-container-box">
+            <div id="loadingProgress" class="absolute top-0 left-0 loader-bar"></div>
+            <div class="flex flex-col sm:flex-row gap-3 relative z-10">
+                <div class="relative flex-grow">
+                    <input 
+                        type="text" 
+                        id="hallTicketInput"
+                        placeholder="HALL TICKET NUMBER" 
+                        class="w-full bg-black/60 border border-zinc-700/50 rounded-xl px-5 py-3.5 text-sm font-bold uppercase tracking-widest input-focus transition-all placeholder:text-zinc-800 text-yellow-accent"
+                    >
+                </div>
+                <button 
+                    onclick="searchResult()"
+                    id="searchBtn"
+                    class="bg-yellow-accent hover:bg-yellow-400 active:scale-95 text-black font-extrabold px-10 py-3.5 rounded-xl transition-all flex items-center justify-center space-x-2 text-xs uppercase tracking-widest group shadow-[0_0_20px_rgba(255,215,0,0.15)]"
+                >
+                    <span>Fetch Backlogs</span>
+                    <i class="fas fa-bolt text-[10px] group-hover:animate-bounce"></i>
+                </button>
+            </div>
+            <p id="errorMsg" class="text-red-400 mt-4 text-[11px] font-bold hidden flex items-center justify-center bg-red-400/5 py-2 rounded-lg border border-red-400/10">
+                <i class="fas fa-shield-alt mr-2"></i> <span id="errorText"></span>
+            </p>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loadingState" class="hidden flex flex-col items-center justify-center py-16">
+            <div class="relative">
+                <div class="w-12 h-12 border-2 border-zinc-800 rounded-full"></div>
+                <div class="w-12 h-12 border-t-2 border-yellow-accent rounded-full animate-spin absolute top-0 left-0"></div>
+            </div>
+            <p class="text-zinc-600 font-bold uppercase tracking-[0.4em] text-[10px] mt-6">Decrypting Database...</p>
         </div>
 
         <div id="reportArea" class="hidden space-y-8 animate-reveal">
@@ -378,6 +404,15 @@
   
 </footer>
     <script>
+      window.onload = () => {
+    const g = document.getElementById("timeGreeting");
+    const h = new Date().getHours();
+    g.innerText =
+        h < 12 ? "— Good Morning  Bro—" :
+        h < 17 ? "— Good Afternoon Bro—" :
+                 "— Good Evening Bro—";
+    g.classList.remove("opacity-0");
+};
 
         //Social Popup
         const SOCIAL_DATA = {
@@ -619,4 +654,5 @@ function sendFeedback() {
         }
     </script>
 </body>
+
 </html>
