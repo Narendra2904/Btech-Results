@@ -922,18 +922,36 @@ function renderResult(mode) {
 function renderSemester(sem) {
     addSemesterHeader(sem.semester);
     const subjects = sem.subjects || [];
+    
+    // Tracks subjects we've already displayed to detect RC/RV
+    const displayedSubjectCodes = new Set();
+
+    // Separate based on attempt type
     const regularSubjects = subjects.filter(s => s.attempt === "regular");
     const supplySubjects = subjects.filter(s => s.attempt === "supply");
 
     if (regularSubjects.length > 0) {
         addSubHeader("REGULAR RESULTS", regularSubjects[0].examCode || "");
-        regularSubjects.forEach(addRow);
+        regularSubjects.forEach(sub => {
+            const code = sub.subjectCode || sub.code;
+            // Check if we've seen this subject in this sem already
+            const isRCRV = displayedSubjectCodes.has(code);
+            addRow(sub, isRCRV);
+            displayedSubjectCodes.add(code);
+        });
     }
     
     if (supplySubjects.length > 0) {
+        // Group supply subjects by attempt number or exam code to keep headers clean
         const lastSupply = supplySubjects[supplySubjects.length - 1];
         addSubHeader("SUPPLY RESULTS", lastSupply.examCode || "", lastSupply.attemptNumber || "");
-        supplySubjects.forEach(addRow);
+        
+        supplySubjects.forEach(sub => {
+            const code = sub.subjectCode || sub.code;
+            const isRCRV = displayedSubjectCodes.has(code);
+            addRow(sub, isRCRV);
+            displayedSubjectCodes.add(code);
+        });
     }
     addSGPARow(calculateSGPA(subjects));
 }
@@ -978,33 +996,29 @@ function addSubHeader(title, examCode = "", attemptNum = "") {
   tbody.appendChild(tr);
 }
 
-function addRow(sub) {
+function addRow(sub, isRCRV = false) {
     const tbody = document.getElementById("resultTableBody");
     const tr = document.createElement("tr");
     
-    // Determine if the subject is a fail
-    // Usually "F" is Fail, "S" is Absent/Fail in JNTUH systems
-    const isFailed = sub.grade === "F" || sub.grade === "S";
-    
-    // Apply a red background tint and red text if failed
-    // We use Tailwind classes: bg-red-900/20 (tint) and text-red-400 (bright red text)
-    const failClass = isFailed ? "bg-red-900/20 text-red-400" : "";
-    const gradeBadgeClass = isFailed ? "text-red-500 font-black" : "text-zinc-200";
+    // Create the RC/RV badge HTML
+    const rcrvBadge = isRCRV 
+        ? `<span class="ml-2 bg-blue-500/20 text-blue-400 text-[8px] px-1.5 py-0.5 rounded border border-blue-500/30 font-black">RC/RV</span>` 
+        : "";
 
-    tr.className = `${failClass} transition-colors duration-300`;
-    
     tr.innerHTML = `
-        <td class="px-2 md:px-6 py-3 border border-zinc-800 font-mono text-[9px] md:text-[12px] ${isFailed ? 'text-red-400/70' : 'text-zinc-400'}">${sub.subjectCode}</td>
-        <td class="px-2 md:px-6 py-3 border border-zinc-800 font-medium text-[9px] md:text-[12px]">${sub.subjectName}</td>
+        <td class="px-2 md:px-6 py-3 border border-zinc-800 font-mono text-zinc-400 text-[9px] md:text-[12px]">${sub.subjectCode}</td>
+        <td class="px-2 md:px-6 py-3 border border-zinc-800 font-medium text-[9px] md:text-[12px]">
+            <div class="flex items-center">
+                ${sub.subjectName} ${rcrvBadge}
+            </div>
+        </td>
         <td class="px-1 md:px-4 py-3 border border-zinc-800 text-center text-[9px] md:text-[12px]">${sub.internal}</td>
         <td class="px-1 md:px-4 py-3 border border-zinc-800 text-center text-[9px] md:text-[12px]">${sub.external}</td>
-        <td class="px-1 md:px-4 py-3 border border-zinc-800 text-center text-[9px] md:text-[12px] font-bold">${sub.total}</td>
-        <td class="px-1 md:px-4 py-3 border border-zinc-800 text-center font-black text-[9px] md:text-[12px] ${gradeBadgeClass}">${sub.grade}</td>
+        <td class="px-1 md:px-4 py-3 border border-zinc-800 text-center text-[9px] md:text-[12px]">${sub.total}</td>
+        <td class="px-1 md:px-4 py-3 border border-zinc-800 text-center font-bold text-[9px] md:text-[12px]">${sub.grade}</td>
         <td class="px-1 md:px-4 py-3 border border-zinc-800 text-center text-[9px] md:text-[12px]">${sub.credits}</td>`;
-    
     tbody.appendChild(tr);
 }
-
 function addSGPARow(sgpa) {
   const tbody = document.getElementById("resultTableBody");
   const tr = document.createElement("tr");
