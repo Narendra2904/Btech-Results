@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ACTIVE BACKLOG REPORT | BACK.BENCHERS</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="icon" type="image/png" href="./assets/logo.jpg">
+    <link rel="icon" type="image/png" href="./assets/logo.png">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
@@ -34,37 +34,67 @@
         .text-micro { font-size: 0.65rem; letter-spacing: 0.08em; }
 
         /* PDF / Print Styling */
-        @media print {
-            html, body { background: #fff !important; color: #000 !important; }
-            nav, footer, .no-print, #spotlight, .search-container-box, #burst-container { display: none !important; }
-            
-            .info-table, .sem-table, table { 
-                width: 100% !important; 
-                border: 2px solid #000 !important; 
-                border-collapse: collapse !important; 
-                margin-bottom: 20px !important; 
-            }
-            td, th { 
-                border: 1px solid #000 !important; 
-                padding: 6px 10px !important; 
-                color: #000 !important; 
-                font-size: 10px !important;
-            }
-            .text-micro { 
-                font-size: 8px !important; 
-                border-bottom: 0.5px solid #000 !important; 
-                display: block !important; 
-                margin-bottom: 2px !important; 
-            }
-            .font-bold { font-size: 11px !important; }
-            .sem-header { 
-                background: #f3f4f6 !important; 
-                color: #000 !important; 
-                font-weight: 900 !important;
-                -webkit-print-color-adjust: exact; 
-            }
-        }
+@media print {
+    /* Force B&W Print */
+    html, body {
+        background: #fff !important;
+        color: #000 !important;
+    }
 
+    .no-print {
+        display: none !important;
+    }
+
+    /* Hide non-essential UI */
+    nav, footer, .search-section, .search-container-box, 
+    #spotlight, #burst-container, #countBadge, #loadingState {
+        display: none !important;
+    }
+
+    /* Professional Boxed Styling for both Info and Result Tables */
+    .info-table, .sem-table, table {
+        width: 100% !important;
+        border: 2px solid #000 !important;
+        border-collapse: collapse !important;
+        margin-bottom: 15px !important;
+    }
+
+    td, th {
+        border: 1px solid #000 !important;
+        padding: 5px 8px !important;
+        color: #000 !important;
+        background: transparent !important;
+    }
+
+    th {
+        background: #eee !important;
+        -webkit-print-color-adjust: exact;
+    }
+
+    /* Label and value formatting inside the table cells */
+    .text-micro {
+        font-size: 8px !important;
+        border-bottom: 0.5px solid #000 !important;
+        margin-bottom: 2px !important;
+        display: block !important;
+        color: #000 !important;
+        font-weight: bold !important;
+        text-transform: uppercase;
+    }
+    
+    .font-bold {
+        font-size: 11px !important;
+    }
+
+    /* Ensure semester headers are visible in print */
+    .sem-header {
+        color: #000 !important;
+        border: none !important;
+        padding-left: 0 !important;
+        margin-top: 20px !important;
+        font-size: 12px !important;
+    }
+}
         .social-btn {
             width: 44px; height: 44px;
             border: 1px solid #27272a; border-radius: 12px;
@@ -92,7 +122,7 @@
 
   <!-- LOGO IMAGE -->
   <img
-    src="./assets/logo.jpg"
+    src="./assets/logo.png"
     alt="Backbenchers Logo"
     class="
       w-8 h-8 
@@ -255,7 +285,7 @@
     <div>
       <div class="flex items-center space-x-3 mb-6 group cursor-pointer">
         <img
-          src="./assets/logo.jpg"
+          src="./assets/logo.png"
           alt="Backbenchers Logo"
           class="w-10 h-10 rounded-md shadow-lg
                  transition-transform duration-300
@@ -404,6 +434,14 @@
   
 </footer>
     <script>
+
+      /* ================= ENTER KEY LISTENER ================= */
+document.getElementById("hallTicketInput")?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+        fetchBacklogReport(); // Triggers the search
+    }
+});
+
       window.onload = () => {
     const g = document.getElementById("timeGreeting");
     const h = new Date().getHours();
@@ -539,7 +577,7 @@ function sendFeedback() {
         function toggleMobileMenu() { document.getElementById("mobileMenu").classList.toggle("hidden"); }
 
         async function fetchBacklogReport() {
-            const ht = document.getElementById("htInput").value.trim().toUpperCase();
+            const ht = document.getElementById("hallTicketInput").value.trim().toUpperCase();
             const loader = document.getElementById("loadingState");
             const area = document.getElementById("reportArea");
             const error = document.getElementById("errorMsg");
@@ -656,5 +694,3 @@ function sendFeedback() {
 </body>
 
 </html>
-
-
