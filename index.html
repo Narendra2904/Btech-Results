@@ -923,32 +923,42 @@ function renderSemester(sem) {
     addSemesterHeader(sem.semester);
     const subjects = sem.subjects || [];
     
-    // Tracks subjects already displayed in THIS semester to mark repeats
-    const displayedInThisSem = new Set();
+    // 1. Map to count occurrences of each subject in THIS semester
+    const subjectCounts = {};
+    subjects.forEach(sub => {
+        const code = sub.subjectCode || sub.code;
+        subjectCounts[code] = (subjectCounts[code] || 0) + 1;
+    });
+
+    // 2. Track which codes we have already printed to identify the "repeat" row
+    const printedInThisSem = new Set();
 
     const regularSubjects = subjects.filter(s => s.attempt === "regular");
     const supplySubjects = subjects.filter(s => s.attempt === "supply" || s.attempt === "rcrv");
 
+    // Render Regular
     if (regularSubjects.length > 0) {
         addSubHeader("REGULAR RESULTS", regularSubjects[0].examCode || "");
         regularSubjects.forEach(sub => {
             const code = sub.subjectCode || sub.code;
-            const isRCRV = displayedInThisSem.has(code);
+            // It is RC/RV ONLY if count > 1 AND we already printed one
+            const isRCRV = subjectCounts[code] > 1 && printedInThisSem.has(code);
             addRow(sub, isRCRV);
-            displayedInThisSem.add(code);
+            printedInThisSem.add(code);
         });
     }
     
+    // Render Supply
     if (supplySubjects.length > 0) {
         const lastSupply = supplySubjects[supplySubjects.length - 1];
-        addSubHeader("SUPPLY / RC-RV RESULTS", lastSupply.examCode || "", lastSupply.attemptNumber || "");
+        addSubHeader("SUPPLY RESULTS", lastSupply.examCode || "", lastSupply.attemptNumber || "");
         
         supplySubjects.forEach(sub => {
             const code = sub.subjectCode || sub.code;
-            // If the code was already in Regular, this supply entry is a repeat (RC/RV)
-            const isRCRV = displayedInThisSem.has(code);
+            // It is RC/RV ONLY if count > 1 AND we already printed one
+            const isRCRV = subjectCounts[code] > 1 && printedInThisSem.has(code);
             addRow(sub, isRCRV);
-            displayedInThisSem.add(code);
+            printedInThisSem.add(code);
         });
     }
     addSGPARow(calculateSGPA(subjects));
@@ -994,31 +1004,26 @@ function addSubHeader(title, examCode = "", attemptNum = "") {
   tbody.appendChild(tr);
 }
 
-function addRow(sub, isRepeatedInUI = false) {
+function addRow(sub, isRCRV = false) {
     const tbody = document.getElementById("resultTableBody");
     const tr = document.createElement("tr");
     
-    // Identify Fail/Absent status
     const isFailed = ["F", "S", "ABSENT", "Ab"].includes(sub.grade);
     
-    // Check if backend or frontend logic says this is RC/RV
-    const isRCRV = isRepeatedInUI || sub.attempt === "rcrv";
-    
-    // Apply conditional background colors
+    // Highlighting Logic
     let rowBg = "transparent";
     if (isFailed) {
-        rowBg = "rgba(239, 68, 68, 0.12)"; // Subtle Red for Fail
+        rowBg = "rgba(239, 68, 68, 0.12)"; // Red for Fail
     } else if (isRCRV) {
-        rowBg = "rgba(59, 130, 246, 0.08)"; // Subtle Blue for RC/RV
+        rowBg = "rgba(59, 130, 246, 0.08)"; // Blue for RC/RV
     }
 
-    // RC/RV Badge HTML
+    // Badge logic: Only shows if the repeat logic above triggered it
     const rcrvBadge = isRCRV 
         ? `<span class="ml-2 bg-blue-500/20 text-blue-400 text-[8px] px-1.5 py-0.5 rounded border border-blue-500/30 font-black">RC/RV</span>` 
         : "";
 
-    // Grade styling - make Failures pop
-    const gradeClass = isFailed ? "text-red-500 font-black scale-110" : "text-zinc-200";
+    const gradeClass = isFailed ? "text-red-500 font-black" : "text-zinc-200";
 
     tr.style.backgroundColor = rowBg;
     tr.innerHTML = `
