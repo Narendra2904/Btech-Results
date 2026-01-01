@@ -1000,25 +1000,42 @@ function addRow(sub, isRCRV = false) {
     const tbody = document.getElementById("resultTableBody");
     const tr = document.createElement("tr");
     
-    // Create the RC/RV badge HTML
+    // Identify Fail/Absent status
+    const isFailed = sub.grade === "F" || sub.grade === "S" || sub.grade === "ABSENT";
+    
+    // Apply conditional background colors
+    // Failed: Light red tint | RC/RV: Light blue tint | Default: Transparent
+    let rowBg = "transparent";
+    if (isFailed) rowBg = "rgba(239, 68, 68, 0.1)"; // Red-500 with low opacity
+    else if (isRCRV) rowBg = "rgba(59, 130, 246, 0.05)"; // Blue-500 with low opacity
+
+    // RC/RV Badge HTML
     const rcrvBadge = isRCRV 
         ? `<span class="ml-2 bg-blue-500/20 text-blue-400 text-[8px] px-1.5 py-0.5 rounded border border-blue-500/30 font-black">RC/RV</span>` 
         : "";
 
+    // Grade styling
+    const gradeClass = isFailed ? "text-red-500 font-black" : "text-zinc-200";
+
+    tr.style.backgroundColor = rowBg;
     tr.innerHTML = `
-        <td class="px-2 md:px-6 py-3 border border-zinc-800 font-mono text-zinc-400 text-[9px] md:text-[12px]">${sub.subjectCode}</td>
+        <td class="px-2 md:px-6 py-3 border border-zinc-800 font-mono text-zinc-500 text-[9px] md:text-[12px]">${sub.subjectCode}</td>
         <td class="px-2 md:px-6 py-3 border border-zinc-800 font-medium text-[9px] md:text-[12px]">
             <div class="flex items-center">
-                ${sub.subjectName} ${rcrvBadge}
+                <span class="${isFailed ? 'text-red-200/80' : ''}">${sub.subjectName}</span>
+                ${rcrvBadge}
             </div>
         </td>
         <td class="px-1 md:px-4 py-3 border border-zinc-800 text-center text-[9px] md:text-[12px]">${sub.internal}</td>
         <td class="px-1 md:px-4 py-3 border border-zinc-800 text-center text-[9px] md:text-[12px]">${sub.external}</td>
         <td class="px-1 md:px-4 py-3 border border-zinc-800 text-center text-[9px] md:text-[12px]">${sub.total}</td>
-        <td class="px-1 md:px-4 py-3 border border-zinc-800 text-center font-bold text-[9px] md:text-[12px]">${sub.grade}</td>
+        <td class="px-1 md:px-4 py-3 border border-zinc-800 text-center text-[9px] md:text-[12px] ${gradeClass}">${sub.grade}</td>
         <td class="px-1 md:px-4 py-3 border border-zinc-800 text-center text-[9px] md:text-[12px]">${sub.credits}</td>`;
+    
     tbody.appendChild(tr);
 }
+
+            
 function addSGPARow(sgpa) {
   const tbody = document.getElementById("resultTableBody");
   const tr = document.createElement("tr");
