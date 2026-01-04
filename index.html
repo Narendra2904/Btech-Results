@@ -181,37 +181,37 @@
     </div>
 
     <!-- FEEDBACK -->
-  <div class="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/60">
-  <h4 class="font-black text-[10px] uppercase tracking-[0.3em] mb-4 text-zinc-500">
-    Feedback
-  </h4>
+    <div>
+      <div class="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/60">
+        <h4 class="font-black text-[10px] uppercase tracking-[0.3em] mb-4 text-zinc-500">
+          Feedback
+        </h4>
+        <input
+        id="feedbackMessage"
+          type="text"
+          placeholder="Any issues?"
+          class="w-full bg-black border border-zinc-800 rounded-lg
+                 px-4 py-2.5 text-xs mb-3
+                 focus:border-yellow-accent outline-none"
+        />
+    <button
+  id="feedbackBtn"
+  onclick="sendFeedback()"
+  class="w-full bg-yellow-accent text-black font-black
+         py-2.5 rounded-lg text-[10px]
+         hover:bg-yellow-400 transition-all uppercase tracking-widest">
+  SEND
+</button>
 
-  <input
-  id="userName"
-  type="text"
-  placeholder="Your Name"
-  class="w-full bg-black border border-zinc-800 rounded-lg px-4 py-2.5 text-xs mb-3 focus:border-yellow-accent outline-none text-white"
-/>
+<p id="feedbackStatus"
+   class="hidden mt-3 text-[10px] font-black uppercase tracking-widest text-green-500 text-center">
+  ✅ Feedback Sent
+</p>
 
-<input
-  id="feedbackMessage"
-  type="text"
-  placeholder="Any issues?"
-  class="w-full bg-black border border-zinc-800 rounded-lg px-4 py-2.5 text-xs mb-3 focus:border-yellow-accent outline-none text-white"
-/>
 
-  <button
-    id="feedbackBtn"
-    onclick="sendFeedback()"
-    class="w-full bg-yellow-accent text-black font-black py-2.5 rounded-lg text-[10px] hover:bg-yellow-400 transition-all uppercase tracking-widest"
-  >
-    SEND
-  </button>
-
-  <p id="feedbackStatus" class="hidden mt-3 text-[10px] font-black uppercase tracking-widest text-green-500 text-center">
-    ✅ Feedback Sent
-  </p>
-</div>
+      </div>
+    </div>
+  </div>
 
   <!-- BOTTOM -->
   <div class="max-w-7xl mx-auto border-t border-zinc-900/50 pt-4
@@ -223,30 +223,40 @@
 
 
     <!-- SOCIAL POPUP -->
-<div id="socialPopup" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[9999] hidden flex items-center justify-center">
+<div id="socialPopup"
+     class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[9999]
+            hidden flex items-center justify-center">
 
-  <div class="relative bg-zinc-900 text-white w-[320px] shadow-2xl border border-yellow-accent/20 rounded-2xl overflow-hidden">
+  <div class="relative bg-white text-black w-[320px] shadow-2xl">
 
+    <!-- Close -->
     <button onclick="closePopup()"
-      class="absolute top-3 right-3 w-8 h-8 border border-zinc-700 hover:border-yellow-accent hover:text-yellow-accent flex items-center justify-center font-black transition-colors rounded-lg">
+      class="absolute top-3 right-3 w-8 h-8 border border-black
+             flex items-center justify-center font-black">
       ✕
     </button>
 
-    <div class="flex flex-col items-center px-6 pt-10 pb-6 bg-black/50">
-      <div id="popupIcon" class="w-14 h-14 flex items-center justify-center mb-4">
-        </div>
+    <!-- Header -->
+    <div class="flex flex-col items-center px-6 pt-10 pb-6">
+      <div id="popupIcon"
+           class="w-14 h-14 flex items-center justify-center mb-4">
+        <!-- icon injected by JS -->
+      </div>
 
-      <h2 id="popupTitle" class="text-lg font-black tracking-widest uppercase text-yellow-accent">
+      <h2 id="popupTitle"
+          class="text-lg font-black tracking-widest uppercase">
         INSTAGRAM
       </h2>
 
-      <p class="text-[10px] text-zinc-500 uppercase tracking-[0.25em] mt-1 font-bold">
-        Select a developer
+      <p class="text-[10px] text-gray-500 uppercase tracking-[0.25em] mt-1">
+        Select a developer to connect
       </p>
     </div>
 
-    <div id="popupUsers" class="px-6 pb-8 pt-4 space-y-3">
-        </div>
+    <!-- USERS -->
+    <div id="popupUsers" class="px-6 pb-8 space-y-4">
+    </div>
+
   </div>
 </div>
 
