@@ -7,23 +7,25 @@ export default async function handler(req, res) {
 
   const { name, email, roll, feedback } = req.body;
 
-  const TWILIO_SID = process.env.TWILIO_SID;
-  const TWILIO_TOKEN = process.env.TWILIO_TOKEN;
-  const MY_NUMBER = process.env.MY_NUMBER;
+  const client = twilio(process.env.TWILIO_SID, process.env.TWILIO_TOKEN);
 
-  const client = twilio(TWILIO_SID, TWILIO_TOKEN);
-
-  const text = `📩 New Feedback\n👤 Name: ${name}\n📧 Email: ${email}\n🎓 Roll: ${roll}\n💬 ${feedback}`;
+  const textMessage = `
+📩 New Feedback
+👤 Name: ${name}
+📧 Email: ${email}
+🎓 Roll: ${roll}
+💬 ${feedback}
+  `;
 
   try {
     await client.messages.create({
-      from: "whatsapp:+14155238886",
-      to: `whatsapp:+91${MY_NUMBER}`,
-      body: text
+      from: "whatsapp:+14155238886",  
+      to: `whatsapp:+91${process.env.MY_NUMBER}`,
+      body: textMessage
     });
     res.status(200).json({ ok: true });
   } catch (err) {
-    console.error(err);
+    console.error("TWILIO SEND ERROR:", err);
     res.status(500).json({ ok: false });
   }
 }
