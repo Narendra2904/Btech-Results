@@ -538,41 +538,54 @@ document.getElementById("hallTicketInput")
 
 /* ---------- FEEDBACK LOGIC (WEB3FORMS) ---------- */
 async function sendFeedback() {
-    const nameInput = document.getElementById("userName"); // Select the name input
-    const msgInput = document.getElementById("feedbackMessage");
-    const btn = document.getElementById("feedbackBtn");
-    
-    const name = nameInput.value.trim() || "Anonymous"; // Fallback if empty
-    const msg = msgInput.value.trim();
+  const name = document.getElementById("feedbackName").value.trim();
+  const email = document.getElementById("feedbackEmail").value.trim();
+  const feedback = document.getElementById("feedbackMessage").value.trim();
+  const roll = document.getElementById("resRoll").innerText.trim();
 
-    if (!msg) return;
+  const btn = document.getElementById("feedbackBtn");
+  const status = document.getElementById("feedbackStatus");
 
-    btn.innerText = "SENDING...";
+  if (!name || !email || !feedback) {
+    alert("Enter name, email and feedback!");
+    return;
+  }
 
-    try {
-        const response = await fetch("https://api.web3forms.com/submit", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-            },
-            body: JSON.stringify({
-                access_key: "a97eb536-0fc7-4209-96ff-cc48e11fe234",
-                subject: `Feedback from ${name}`, // 👈 THIS UPDATES THE EMAIL SUBJECT
-                from_name: name,                  // 👈 THIS UPDATES THE SENDER NAME
-                name: name,
-                message: msg
-            }),
-        });
+  btn.innerText = "SENDING...";
+  btn.disabled = true;
 
-        if (response.ok) {
-            btn.innerText = "SENT ✓";
-            nameInput.value = "";
-            msgInput.value = "";
-        }
-    } catch (err) {
-        btn.innerText = "FAILED";
-    }
+  try {
+    await fetch("/api/send-whatsapp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: name,
+        email: email,
+        roll: roll,
+        feedback: feedback
+      })
+    });
+
+    status.classList.remove("hidden");
+    status.innerText = `✅ SENT — ${name}`;
+    btn.innerText = "SENT ✓";
+
+    document.getElementById("feedbackName").value = "";
+    document.getElementById("feedbackEmail").value = "";
+    document.getElementById("feedbackMessage").value = "";
+
+  } catch (err) {
+    console.error(err);
+    status.classList.remove("hidden");
+    status.innerText = "❌ ERROR";
+    btn.innerText = "FAILED";
+  } finally {
+    setTimeout(() => {
+      btn.innerText = "SEND";
+      btn.disabled = false;
+      status.classList.add("hidden");
+    }, 3000);
+  }
 }
 
 
@@ -1279,6 +1292,7 @@ async function sendFeedback() {
         }
     });
 });
+
 
 
 
