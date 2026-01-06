@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIVE RESULTS | BACK.BENCHERS</title>
+    <link rel="icon" type="image/png" href="./assets/fav.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- Custom Config for Tailwind Colors to match your design -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'yellow-accent': '#FFD700', // Gold color inferred from your design
+                        'zinc-850': '#1f1f22',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    animation: {
+                        'reveal': 'reveal 0.3s ease-out forwards',
+                        'shine': 'shine 1s linear infinite',
+                    },
+                    keyframes: {
+                        reveal: {
+                            '0%': { opacity: '0', transform: 'translateY(-10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        shine: {
+                            '0%': { transform: 'translateX(-100%) skewX(-12deg)' },
+                            '100%': { transform: 'translateX(200%) skewX(-12deg)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Spotlight Effect */
+        #spotlight {
+            position: fixed;
+            top: -20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80vw;
+            height: 60vh;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.08) 0%, transparent 70%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #111;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #FFD700;
+        }
+
+        /* Text Utilities */
+        .heading-tight {
+            letter-spacing: -0.05em;
+            line-height: 0.95;
+        }
+
+        .text-micro {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        /* Inputs */
+        .input-focus:focus {
+            outline: none;
+            border-color: #FFD700;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.1);
+        }
+
+        /* Tables */
+        .boxed-table th, .boxed-table td {
+            white-space: nowrap;
+        }
+        
+        .info-table td {
+            position: relative;
+        }
+
+        /* Print Styles */
+        @media print {
+    html, body {
+        background: #fff !important;
+        color: #000 !important;
+    }
+
+    .no-print, nav, footer, .search-section,
+    .search-container-box, #spotlight {
+        display: none !important;
+    }
+
+    /* Center the result for printing */
+    main {
+        padding: 0 !important;
+        margin: 0 auto !important;
+        max-width: 100% !important;
+    }
+
+    /* Box styling for tables */
+    table, .info-table, .boxed-table {
+        border: 2px solid #000 !important;
+        border-collapse: collapse !important;
+        width: 100% !important;
+        margin-bottom: 20px !important;
+    }
+
+    th, td {
+        border: 1px solid #000 !important;
+        padding: 6px 10px !important;
+        font-size: 12px !important;
+        color: #000 !important;
+    }
+
+    /* Highlight SGPA */
+    .table-wrapper div:last-child {
+        border-top: 2px solid #000 !important;
+        font-size: 16px !important;
+        font-weight: 900 !important;
+        color: #000 !important;
+        padding: 10px !important;
+    }
+
+    /* Make labels smaller */
+    .text-micro {
+        font-size: 8px !important;
+        font-weight: 900 !important;
+        margin-bottom: 2px !important;
+        text-transform: uppercase !important;
+    }
+}
+
+        
+        /* Mobile Menu Animation */
+        #mobileMenu.hidden {
+            display: none;
+        }
+        #mobileMenu:not(.hidden) {
+            display: block;
+        }
+
+        .loader-bar {
+            height: 2px;
+            width: 0%;
+            background: #FFD700;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px #FFD700;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <div id="spotlight"></div>
+
+    <!-- Header / Navbar -->
+    <nav class="border-b border-zinc-800/60 bg-black/80 backdrop-blur-xl sticky top-0 z-50">
+    <div class="max-w-full lg:max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+        
+        <div class="flex items-center space-x-3 group cursor-pointer shrink-0" onclick="window.location.href='index.html'">
+            <img src="./assets/fav.png" alt="Backbenchers Logo" class="w-8 h-8 rounded-md transition-transform duration-300 group-hover:scale-110 shadow-md" />
+            <div class="bg-yellow-accent text-black font-black px-2 py-0.5 text-sm rounded-sm transition-transform duration-300 group-hover:-rotate-2">
+                BACK
+            </div>
+            <span class="font-extrabold text-lg tracking-tighter transition-colors duration-300 group-hover:text-yellow-accent">
+                BENCHERS
+            </span>
+        </div>
+
+        <div class="hidden md:flex flex-1 justify-center">
+            <div class="flex items-center space-x-4 lg:space-x-6 font-bold text-[10px] uppercase tracking-widest text-zinc-500">
+                <a href="/" class="nav-link hover:text-yellow-accent ">Home</a>
+                <a href="/result" class="nav-link hover:text-yellow-accent">All Results</a>
+                <a href="/liveresults" class="nav-link hover:text-yellow-accent border-b-2 border-yellow-accent pb-1">Live Results</a>
+                <a href="/backlog" class="nav-link hover:text-yellow-accent">Backlog Report</a>
+                <a href="/creditChecker" class="nav-link hover:text-yellow-accent">Credit Checker</a>
+                <a href="/compare" class="nav-link hover:text-yellow-accent">Compare</a>
+                <a href="https://btech-notes.vercel.app" class="nav-link hover:text-yellow-accent">Notes</a>
+            </div>
+        </div>
+
+        <div class="flex items-center md:hidden">
+            <button onclick="toggleMobileMenu()" class="text-yellow-accent text-2xl p-2 focus:outline-none hover:bg-zinc-900 rounded-lg transition-colors">
+                <i id="menuIcon" class="fas fa-bars"></i>
+            </button>
+        </div>
+
+        <div class="hidden lg:flex items-center gap-2 text-micro font-bold text-zinc-500 bg-zinc-900/50 px-3 py-1.5 rounded-full border border-zinc-800/50">
+            <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+            SERVER: ACTIVE
+        </div>
+    </div>
+
+    <div id="mobileMenu" class="md:hidden hidden bg-black border-t border-zinc-800 absolute top-16 left-0 w-full z-50 px-6 py-8 space-y-6 shadow-2xl animate-reveal">
+        <a href="/" class="block text-yellow-accent font-black text-xs uppercase tracking-[0.2em] py-2 border-b border-zinc-900"><i class="fas fa-home mr-3"></i> Home</a>
+        <a href="/result" class="block text-zinc-400 font-black text-xs uppercase tracking-[0.2em] py-2 border-b border-zinc-900"><i class="fas fa-search mr-3"></i> All Results</a>
+        <a href="/liveresults" class="block text-zinc-400 font-black text-xs uppercase tracking-[0.2em] py-2 border-b border-zinc-900"><i class="fas fa-<link rel="icon" type="image/png" href="./assets/fav.png"></i> mr-3"></i> Live Results</a>
+        <a href="/backlog" class="block text-zinc-400 font-black text-xs uppercase tracking-[0.2em] py-2 border-b border-zinc-900"><i class="fas fa-exclamation-triangle mr-3"></i> Backlog Report</a>
+        <a href="/creditChecker" class="block text-zinc-400 font-black text-xs uppercase tracking-[0.2em] py-2 border-b border-zinc-900"><i class="fas fa-award mr-3"></i> Credit Checker</a>
+         <a href="/compare" class="block text-zinc-400 font-black text-xs uppercase tracking-[0.2em] py-2 border-b border-zinc-900"><i class="fas fa-balance-scale mr-3"></i> Compare Results</a>
+        <a href="https://btech-notes.vercel.app" class="block text-zinc-400 font-black text-xs uppercase tracking-[0.2em] py-2"><i class="fas fa-notes-medical mr-3"></i> Notes</a>
+    </div>
+</nav>  
+
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-5xl mx-auto w-full px-6 py-12">
+        <div class="mb-8 no-print">
+            <a href="index.html" 
+               class="inline-flex items-center gap-2 px-4 py-2 bg-zinc-900/50 border border-zinc-800 rounded-xl text-zinc-400 text-[10px] font-black uppercase tracking-widest hover:border-yellow-accent hover:text-yellow-accent transition-all group">
+                <i class="fas fa-chevron-left text-[8px] group-hover:-translate-x-1 transition-transform"></i>
+                Back to Dashboard
+            </a>
+        </div>
+        
+        <!-- Search Section -->
+        <div class="text-center mb-10 search-section">
+            <p id="timeGreeting" class="text-yellow-accent text-[10px] font-black uppercase tracking-[0.3em] mb-2 transition-opacity duration-1000">LIVE UPDATES</p>
+            <!-- UPDATED HEADING FOR III-II -->
+            <h1 class="text-3xl md:text-4xl font-black heading-tight mb-3 text-white">JNTUH B.Tech <span class="text-yellow-accent">RESULTS</span></h1>
+            <p class="text-zinc-500 text-sm max-w-md mx-auto leading-relaxed">R22 Regular/Supply Results Released. Enter your HallTicket below.</p>
+        </div>
+
+        <div class="bg-zinc-900/30 p-5 rounded-2xl border border-zinc-800/50 shadow-2xl mb-10 group relative overflow-hidden search-container-box">
+            <div id="loadingProgress" class="absolute top-0 left-0 loader-bar"></div>
+            <div class="flex flex-col sm:flex-row gap-3 relative z-10">
+                <div class="relative flex-grow">
+                    <input 
+                        type="text" 
+                        id="hallTicketInput"
+                        placeholder="HALL TICKET NUMBER" 
+                        maxlength="10"
+                        class="w-full bg-black/60 border border-zinc-700/50 rounded-xl px-5 py-3.5 text-sm font-bold uppercase tracking-widest input-focus transition-all placeholder:text-zinc-700 text-yellow-accent"
+                    >
+                </div>
+                <button 
+                    onclick="fetchLiveResults()"
+
+                    id="searchBtn"
+                    class="bg-yellow-accent hover:bg-yellow-400 active:scale-95 text-black font-extrabold px-10 py-3.5 rounded-xl transition-all flex items-center justify-center space-x-2 text-xs uppercase tracking-widest group shadow-[0_0_20px_rgba(255,215,0,0.15)]"
+                >
+                    <span>Fetch Results</span>
+                    <i class="fas fa-bolt text-[10px] group-hover:animate-bounce"></i>
+                </button>
+            </div>
+            <p id="errorMsg" class="hidden mt-4 text-[11px] font-bold text-red-400 items-center justify-center bg-red-400/5 py-2 rounded-lg border border-red-400/10 animate-reveal">
+                <i class="fas fa-shield-alt mr-2"></i> <span id="errorText"></span>
+            </p>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loadingState" class="hidden flex flex-col items-center justify-center py-16">
+            <div class="relative">
+                <div class="w-12 h-12 border-2 border-zinc-800 rounded-full"></div>
+                <div class="w-12 h-12 border-t-2 border-yellow-accent rounded-full animate-spin absolute top-0 left-0"></div>
+            </div>
+            <p class="text-zinc-600 font-bold uppercase tracking-[0.4em] text-[10px] mt-6">Retrieving 
+                 Data...</p>
+        </div>
+
+        <!-- Result Container -->
+        <div id="resultContainer" class="hidden space-y-4 md:space-y-6 animate-reveal">
+            
+            <div class="info-table-container">
+                <h2 id="resultYearHeading" class="text-center font-black text-2xl my-4">---</h2>
+
+
+
+
+                <table class="w-full border-collapse border-2 border-zinc-800 info-table bg-black/40 backdrop-blur-sm">
+                    <tbody class="block">
+                        <tr class="grid grid-cols-3 border-b border-zinc-800">
+                            <td class="p-0 border-r border-zinc-800">
+                                <div class="px-2 md:px-4 py-2">
+                                    <p class="text-[7px] md:text-micro font-black text-zinc-500 uppercase">Name</p>
+                                    <p id="resName" class="font-bold text-[9px] md:text-[13px] truncate text-white">STUDENT NAME</p>
+                                </div>
+                            </td>
+                            <td class="p-0 border-r border-zinc-800">
+                                <div class="px-2 md:px-4 py-2">
+                                    <p class="text-[7px] md:text-micro font-black text-zinc-500 uppercase">Roll Number</p>
+                                    <p id="resRoll" class="font-bold text-[9px] md:text-[13px] text-yellow-accent">---</p>
+                                </div>
+                            </td>
+                            <td class="p-0">
+                                <div class="px-2 md:px-4 py-2">
+                                    <p class="text-[7px] md:text-micro font-black text-zinc-500 uppercase">Code</p>
+                                    <p id="resCollegeCode" class="font-bold text-[9px] md:text-[13px] text-zinc-300">XX</p>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="grid grid-cols-3">
+                            <td class="p-0 border-r border-zinc-800">
+                                <div class="px-2 md:px-4 py-2">
+                                    <p class="text-[7px] md:text-micro font-black text-zinc-500 uppercase">Father Name</p>
+                                    <p id="resFather" class="font-bold text-[9px] md:text-[13px] truncate text-zinc-300">FATHER NAME</p>
+                                </div>
+                            </td>
+                            <td class="p-0 border-r border-zinc-800">
+                                <div class="px-2 md:px-4 py-2">
+                                    <p class="text-[7px] md:text-micro font-black text-zinc-500 uppercase">College</p>
+                                    <p id="resCollege" class="font-bold text-[8px] md:text-[13px] leading-tight truncate text-zinc-300">JNTUH COLLEGE OF ENGINEERING</p>
+                                </div>
+                            </td>
+                            <td class="p-0">
+                                <div class="px-2 md:px-4 py-2">
+                                    <p class="text-[7px] md:text-micro font-black text-zinc-500 uppercase">Branch</p>
+                                    <p id="resBranch" class="font-bold text-[9px] md:text-[13px] text-yellow-accent truncate">CSE</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="flex flex-col-reverse md:flex-row justify-between items-stretch md:items-center gap-3 no-print px-1">
+                <button onclick="window.print()" class="bg-yellow-accent text-black font-black px-6 py-3.5 rounded-xl text-[10px] uppercase tracking-widest shadow-lg flex items-center justify-center transition-transform active:scale-95 hover:bg-yellow-400">
+                    <i class="fas fa-print mr-2"></i> Print Memo
+                </button>
+                
+            </div>
+
+            <div class="table-wrapper overflow-hidden rounded-xl border border-zinc-800 shadow-2xl bg-zinc-900/20">
+                <div class="overflow-x-auto">
+                    <table class="boxed-table w-full min-w-[650px] md:min-w-full">
+                        <thead>
+                            <tr class="bg-zinc-900/80 text-zinc-400 text-[9px] md:text-[10px] uppercase tracking-widest">
+                                <th class="px-3 md:px-4 py-3 border-b border-zinc-800">Sub Code</th>
+                                <th class="px-3 md:px-4 py-3 border-b border-zinc-800 text-left">Subject Name</th>
+                                <th class="px-2 md:px-4 py-3 border-b border-zinc-800 text-center">Int</th>
+                                <th class="px-2 md:px-4 py-3 border-b border-zinc-800 text-center">Ext</th>
+                                <th class="px-2 md:px-4 py-3 border-b border-zinc-800 text-center">Total</th>
+                                <th class="px-2 md:px-4 py-3 border-b border-zinc-800 text-center">Grade</th>
+                                <th class="px-2 md:px-4 py-3 border-b border-zinc-800 text-center">Cr</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultTableBody" class="text-[11px] md:text-[12px] text-zinc-300">
+                            <!-- JS will populate this -->
+                        </tbody>
+                    </table>
+                </div>
+                <!-- SGPA Display -->
+                <div class="p-4 bg-zinc-900/50 border-t border-zinc-800 flex justify-between items-center">
+                    <span id="resultStatus">---</span>
+<span id="gpaValue">0.00</span>
+
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+<footer class="bg-black border-t border-zinc-900 pt-10 pb-5 px-6 relative">
+<div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+
+    <!-- BRAND -->
+    <div>
+      <div class="flex items-center space-x-3 mb-6 group cursor-pointer">
+        <img
+          src="./assets/fav.png"
+          alt="Backbenchers Logo"
+          class="w-10 h-10 rounded-md shadow-lg
+                 transition-transform duration-300
+                 group-hover:scale-110 group-hover:rotate-3"
+        />
+        <div>
+          <p class="font-extrabold text-lg tracking-tight text-zinc-200
+                    group-hover:text-yellow-accent transition-colors">
+            BACKBENCHERS
+          </p>
+          <p class="text-[10px] uppercase tracking-[0.35em] text-zinc-600 font-black">
+            Results Engine
+          </p>
+        </div>
+      </div>
+
+      <p class="text-zinc-600 text-[11px] leading-relaxed max-w-xs font-medium uppercase tracking-wider">
+        Fast. Free. Reliable.  
+        Built by students, for students.
+      </p>
+        <div class="mt-6">
+    <a href="https://expo.dev/artifacts/eas/hUXNz5RPAG1R9Wc8K8geDb.apk" 
+       class="inline-flex items-center gap-2 bg-zinc-900 border border-zinc-800 px-4 py-2 rounded-xl group hover:border-yellow-accent transition-all">
+       <div class="w-8 h-8 bg-yellow-accent rounded-lg flex items-center justify-center text-black group-hover:scale-110 transition-transform">
+         <i class="fas fa-robot text-sm"></i>
+       </div>
+       <div>
+         <p class="text-[10px] font-black uppercase tracking-widest text-zinc-200 leading-none">Android App</p>
+         <p class="text-[9px] text-zinc-500 font-bold mt-1">v1.0.0 • Download APK</p>
+       </div>
+    </a>
+  </div>
+    </div>
+
+    <!-- SOCIALS -->
+    <div>
+      <h4 class="font-black text-[10px] text-zinc-500 uppercase tracking-[0.3em] mb-6">
+        Connect With Us
+      </h4>
+
+      <div class="flex space-x-5">
+        <!-- Instagram -->
+        <button onclick="openPopup('instagram')"
+          class="social-btn">
+          <i class="fab fa-instagram"></i>
+        </button>
+
+        <!-- GitHub -->
+        <button onclick="openPopup('github')"
+          class="social-btn">
+          <i class="fab fa-github"></i>
+        </button>
+
+        <!-- LinkedIn -->
+        <button onclick="openPopup('linkedin')"
+          class="social-btn">
+          <i class="fab fa-linkedin-in"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- FEEDBACK -->
+    <div>
+      <div class="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/60">
+        <h4 class="font-black text-[10px] uppercase tracking-[0.3em] mb-4 text-zinc-500">
+          Feedback
+        </h4>
+        <input
+        id="feedbackMessage"
+          type="text"
+          placeholder="Any issues?"
+          class="w-full bg-black border border-zinc-800 rounded-lg
+                 px-4 py-2.5 text-xs mb-3
+                 focus:border-yellow-accent outline-none"
+        />
+    <button
+  id="feedbackBtn"
+  onclick="sendFeedback()"
+  class="w-full bg-yellow-accent text-black font-black
+         py-2.5 rounded-lg text-[10px]
+         hover:bg-yellow-400 transition-all uppercase tracking-widest">
+  SEND
+</button>
+
+<p id="feedbackStatus"
+   class="hidden mt-3 text-[10px] font-black uppercase tracking-widest text-green-500 text-center">
+  ✅ Feedback Sent
+</p>
+
+
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM -->
+  <div class="max-w-7xl mx-auto border-t border-zinc-900/50 pt-4
+              flex flex-col md:flex-row justify-between items-center
+              text-[9px] font-black text-zinc-700 uppercase tracking-[0.3em]">
+    <p>Developed by<span class="text-green-600">NARENDRA YENAGANDULA | MADHAN MYANA</span></p>
+    <p>© 2025 Backbenchers</p>
+  </div>
+
+
+    <!-- SOCIAL POPUP -->
+<div id="socialPopup"
+     class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[9999]
+            hidden flex items-center justify-center">
+
+  <div class="relative bg-white text-black w-[320px] shadow-2xl">
+
+    <!-- Close -->
+    <button onclick="closePopup()"
+      class="absolute top-3 right-3 w-8 h-8 border border-black
+             flex items-center justify-center font-black">
+      ✕
+    </button>
+
+    <!-- Header -->
+    <div class="flex flex-col items-center px-6 pt-10 pb-6">
+      <div id="popupIcon"
+           class="w-14 h-14 flex items-center justify-center mb-4">
+        <!-- icon injected by JS -->
+      </div>
+
+      <h2 id="popupTitle"
+          class="text-lg font-black tracking-widest uppercase">
+        INSTAGRAM
+      </h2>
+
+      <p class="text-[10px] text-gray-500 uppercase tracking-[0.25em] mt-1">
+        Select a developer to connect
+      </p>
+    </div>
+
+    <!-- USERS -->
+    <div id="popupUsers" class="px-6 pb-8 space-y-4">
+    </div>
+
+  </div>
+</div>
+
+
+  </div>
+  <div id="app-download-notification" 
+     style="display: none; z-index: 9999;" 
+     class="fixed bottom-6 left-6 right-6 md:left-auto md:right-6 md:max-w-md animate-reveal">
+    
+    <div class="bg-zinc-900 border-2 border-yellow-accent p-4 rounded-2xl shadow-[0_0_30px_rgba(255,215,0,0.15)] flex items-center gap-4 relative overflow-hidden">
+        <div class="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent to-white/5 opacity-40 group-hover:animate-shine"></div>
+
+        <button type="button" 
+                onclick="window.closeAppNotification()" 
+                class="absolute top-2 right-2 text-zinc-500 hover:text-yellow-accent transition-colors p-1 z-50">
+            <i class="fas fa-times"></i>
+        </button>
+
+        <div class="bg-yellow-accent/10 border border-yellow-accent/30 w-12 h-12 rounded-xl flex items-center justify-center shrink-0">
+            <i class="fas fa-mobile-alt text-yellow-accent text-xl"></i>
+        </div>
+
+        <div class="flex-grow pr-4">
+            <h4 class="font-black text-xs uppercase tracking-widest text-yellow-accent leading-none">Download Android App</h4>
+            <p class="text-[10px] text-zinc-400 font-bold mt-1 leading-tight">Get your results and notes even faster with our native app.</p>
+        </div>
+
+        <a href="https://expo.dev/artifacts/eas/hUXNz5RPAG1R9Wc8K8geDb.apk" 
+           class="bg-yellow-accent hover:bg-yellow-400 text-black font-black px-4 py-2 rounded-lg text-[9px] uppercase tracking-widest transition-all active:scale-95 shadow-lg flex items-center gap-2">
+            Get <i class="fas fa-download text-[8px]"></i>
+        </a>
+    </div>
+</div>
+</footer>
+
+<script>
+const SOCIAL_DATA = {
+  instagram: {
+    title: "INSTAGRAM",
+    color: "bg-pink-500",
+    icon: '<i class="fab fa-instagram text-white text-2xl"></i>',
+    users: [
+      { name: "Narendra Yenagandula", url: "https://instagram.com/narendra_yenagandula" },
+      { name: "Madhan Myana", url: "https://instagram.com/madhan.myana" }
+    ]
+  },
+  github: {
+    title: "GITHUB",
+    color: "bg-black",
+    icon: '<i class="fab fa-github text-white text-2xl"></i>',
+    users: [
+      { name: "Narendra Yenagandula", url: "https://github.com/Narendra2904" },
+      { name: "Madhan Myana", url: "https://github.com/madhanmyana" }
+    ]
+  },
+  linkedin: {
+    title: "LINKEDIN",
+    color: "bg-blue-600",
+    icon: '<i class="fab fa-linkedin-in text-white text-2xl"></i>',
+    users: [
+      { name: "Narendra Yenagandula", url: "https://www.linkedin.com/in/narendra-yenagandula/" },
+      { name: "Madhan Myana", url: "https://www.linkedin.com/in/madhan-myana-7ab90a335/" }
+    ]
+  }
+};
+
+function openPopup(type) {
+  const popup = document.getElementById("socialPopup");
+  const title = document.getElementById("popupTitle");
+  const iconBox = document.getElementById("popupIcon");
+  const usersBox = document.getElementById("popupUsers");
+
+  const data = SOCIAL_DATA[type];
+  if (!data) return;
+
+  title.innerText = data.title;
+  iconBox.className = `w-14 h-14 flex items-center justify-center mb-4 ${data.color}`;
+  iconBox.innerHTML = data.icon;
+
+  usersBox.innerHTML = "";
+  data.users.forEach(u => {
+    const a = document.createElement("a");
+    a.href = u.url;
+    a.target = "_blank";
+    a.className =
+      "flex justify-between items-center border border-black px-4 py-3 font-bold hover:bg-black hover:text-white transition";
+    a.innerHTML = `<span>${u.name}</span><span>→</span>`;
+    usersBox.appendChild(a);
+  });
+
+  popup.classList.remove("hidden");
+}
+
+function closePopup() {
+  document.getElementById("socialPopup").classList.add("hidden");
+}
+
+// click outside popup to close
+document.getElementById("socialPopup")
+  .addEventListener("click", e => {
+    if (e.target.id === "socialPopup") closePopup();
+  });
+
+
+
+
+const SELECTED_EXAM_CODE = "1813";
+const API_BASE_URL = "https://jntuh-backend-7rad.onrender.com/result/";
+
+// Convert semester like 3-1 → III-I (table use only)
+function convertSemToRomanText(sem) {
+  const map = {
+    "1-1": "I-I",
+    "1-2": "I-II",
+    "2-1": "II-I",
+    "2-2": "II-II",
+    "3-1": "III-I",
+    "3-2": "III-II",
+    "4-1": "IV-I",
+    "4-2": "IV-II"
+  };
+  return map[sem.trim()] || sem;
+}
+
+// Calculate SGPA for selected subjects
+function calculateSGPA(subjects) {
+  const GRADE_POINTS = { "O":10, "A+":9, "A":8, "B+":7, "B":6, "C":5, "D":4, "F":0, "AB":0 };
+  let credits = 0, points = 0;
+  subjects.forEach(sub => {
+    const g = sub.grade?.toUpperCase().trim() || "F";
+    const c = parseFloat(sub.credits || 0);
+    credits += c;
+    points += (GRADE_POINTS[g] ?? 0) * c;
+  });
+  return credits === 0 ? "0.00" : (points / credits).toFixed(2);
+}
+
+// Detect PASSED or FAILED
+function detectResult(subjects) {
+  return subjects.some(sub => sub.grade?.toUpperCase().trim() === "F") ? "FAILED" : "PASSED";
+}
+
+// Render only selected exam code + copy sem SGPA logic for heading
+function renderResultTable(studentData) {
+  const tbody = document.getElementById("resultTableBody");
+  tbody.innerHTML = "";
+
+  const selectedSemesters = studentData.semesters.filter(sem =>
+    sem.subjects.some(sub => sub.examCode.toString().trim() === SELECTED_EXAM_CODE)
+  );
+
+  let semForHeading = null;
+  let subsForHeading = [];
+
+  selectedSemesters.forEach(sem => {
+    const filteredSubs = sem.subjects.filter(
+      s => s.examCode.toString().trim() === SELECTED_EXAM_CODE
+    );
+
+    if (!semForHeading && filteredSubs.length > 0) {
+      semForHeading = sem.semester;
+      subsForHeading = filteredSubs;
+    }
+
+    const semText = convertSemToRomanText(sem.semester);
+    const sgpa = calculateSGPA(filteredSubs);
+    const status = detectResult(filteredSubs);
+
+    // Render subject rows
+    filteredSubs.forEach(sub => {
+      const isFail = sub.grade?.toUpperCase().trim() === "F";
+      const tr = document.createElement("tr");
+      tr.className = isFail ? "text-red-500 font-bold bg-red-100/10" : "";
+      tr.innerHTML = `
+        <td class="border border-black px-3 py-1">${sub.subjectCode}</td>
+        <td class="border border-black px-3 py-1 uppercase">${sub.subjectName}</td>
+        <td class="border border-black px-3 py-1 text-center">${sub.internal}</td>
+        <td class="border border-black px-3 py-1 text-center">${sub.external}</td>
+        <td class="border border-black px-3 py-1 text-center">${sub.total}</td>
+        <td class="border border-black px-3 py-1 text-center">${sub.grade}</td>
+        <td class="border border-black px-3 py-1 text-center">${sub.credits}</td>`;
+      tbody.appendChild(tr);
+    });
+
+    // Semester SGPA row
+    const ht = document.getElementById("hallTicketInput").value.trim().toUpperCase();
+const officialLink = `http://results.jntuh.ac.in/results/resultAction?degree=btech&examCode=${SELECTED_EXAM_CODE}&etype=r17&result=null&grad=null&type=intgrade&htno=${ht}`;
+
+const sgpaRow = document.createElement("tr");
+sgpaRow.innerHTML = `
+  <td colspan="6" class="border-2 border-black text-right font-black py-1 px-3">
+    ${semText} SGPA: ${sgpa} (${status})
+  </td>
+  <td class="border-2 border-black text-center">
+    <a href="${officialLink}" target="_blank" class="text-blue-600 font-bold underline text-xs">
+      Direct Link
+    </a>
+  </td>`;
+
+    tbody.appendChild(sgpaRow);
+  });
+
+  // ✨ Copy SAME SGPA + result logic for TOP year heading
+  if (semForHeading && subsForHeading.length > 0) {
+    const semText = convertSemToRomanText(semForHeading);
+    const sgpa = calculateSGPA(subsForHeading);
+    const status = detectResult(subsForHeading);
+
+    document.getElementById("resultYearHeading").innerText =
+      `Results of ${semText} B.Tech Exams `;
+  } else {
+    document.getElementById("resultYearHeading").innerText = "---";
+  }
+
+  // Update footer panel GPA + result
+  const finalSubs = selectedSemesters.flatMap(s => s.subjects)
+                    .filter(s => s.examCode.toString().trim() === SELECTED_EXAM_CODE);
+
+  document.getElementById("gpaValue").innerText = studentData.gpa || calculateSGPA(finalSubs);
+  document.getElementById("resultStatus").innerText = studentData.result || detectResult(finalSubs);
+}
+
+// 🔥 Main fetch (no missing anything)
+async function fetchLiveResults() {
+  const ht = document.getElementById("hallTicketInput").value.trim().toUpperCase();
+  const loader = document.getElementById("loadingState");
+  const resultBox = document.getElementById("resultContainer");
+  const errorBox = document.getElementById("errorMsg");
+  const errorText = document.getElementById("errorText");
+
+  if (!ht) return;
+
+  loader.classList.remove("hidden");
+  errorBox.classList.add("hidden");
+  resultBox.classList.add("hidden");
+
+  try {
+    const res = await fetch(API_BASE_URL + ht);
+    const json = await res.json();
+    if (!json?.data?.semesters) throw new Error("No results found!");
+
+    const studentData = json.data;
+
+    // Fill student panel info
+    document.getElementById("resName").innerText = studentData.name || "---";
+    document.getElementById("resRoll").innerText = studentData.hallTicket || ht;
+    document.getElementById("resFather").innerText = studentData.fatherName || "---";
+    document.getElementById("resCollegeCode").innerText = studentData.collegeCode || "---";
+    document.getElementById("resBranch").innerText = studentData.branch || "---";
+
+    // Render ONLY selected exam results
+    renderResultTable(studentData);
+
+    loader.classList.add("hidden");
+    resultBox.classList.remove("hidden");
+    resultBox.classList.add("animate-reveal");
+
+  } catch (err) {
+    loader.classList.add("hidden");
+    errorText.innerText = err.message;
+    errorBox.classList.remove("hidden");
+  }
+}
+
+
+// 🧪 BETA POPUP LOGIC
+window.onload = function () {
+  showBetaPopup();
+};
+
+function showBetaPopup() {
+  const popup = document.createElement("div");
+  popup.id = "betaPopup";
+  popup.className = "fixed inset-0 bg-black/70 backdrop-blur-sm z-[9999] flex items-center justify-center";
+
+  popup.innerHTML = `
+    <div class="bg-white text-black w-[320px] p-5 rounded-xl shadow-2xl animate-reveal relative">
+      <button onclick="closeBetaPopup()" 
+              class="absolute top-2 right-2 text-gray-600 hover:text-red-500 font-black text-lg">✕</button>
+      <h2 class="text-center font-black text-xl uppercase tracking-widest mb-3 text-yellow-600">BETA VERSION</h2>
+      <p class="text-center text-sm font-bold text-gray-700 mb-4">
+        This Live Results page is a <span class="text-yellow-600 font-black">Beta release</span> 🚧<br/>
+        Still under testing. Data may contain bugs or incorrect values.<br/>
+        Thank you for trying it out!
+      </p>
+      <div class="text-center">
+        <button onclick="closeBetaPopup()" 
+                class="bg-yellow-600 hover:bg-yellow-500 text-white font-black px-5 py-2 rounded-lg text-xs uppercase tracking-widest active:scale-95">
+          Got it
+        </button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(popup);
+}
+
+function closeBetaPopup() {
+  document.getElementById("betaPopup")?.remove();
+}
+
+
+</script>
+
+</body>
+</html>
