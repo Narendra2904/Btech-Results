@@ -640,7 +640,8 @@ document.getElementById("socialPopup")
 
 
 const SELECTED_EXAM_CODE = "1813";
-const API_BASE_URL = "https://jntuh-backend-7rad.onrender.com";
+const API_BASE = "https://jntuh-backend-7rad.onrender.com";
+        const res = await fetch(`${API_BASE}/result/${htno}`);
 
 // Convert semester like 3-1 → III-I (table use only)
 function convertSemToRomanText(sem) {
